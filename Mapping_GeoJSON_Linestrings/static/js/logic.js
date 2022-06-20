@@ -20,7 +20,7 @@ let baseMaps = {
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
-  center: [30, 30],
+  center: [44.0, -80.0],
   zoom: 2,
   layers: [light]
 })
@@ -28,12 +28,23 @@ let map = L.map('mapid', {
 // Pass our map layers into our layers control and add the layers control to the map.
 L.control.layers(baseMaps).addTo(map);
 
-// Accessing the airport GeoJSON URL
-let airportData = "https://raw.githubusercontent.com/dgeroux/Mapping_Earthquakes/mapping_geoJSON_points/majorAirports.json";
+// Accessing the Toronto airline routes GeoJSON URL.
+let torontoData = "https://raw.githubusercontent.com/dgeroux/Mapping_Earthquakes/mapping_geoJSON_Linestrings/torontoRoutes.json"
+
+// Create a style for the lines.
+let myStyle = {
+  color: "#ffffa1",
+  weight: 2
+}
 
 // Grabbing our GeoJSON data.
-d3.json(airportData).then(function(data) {
+d3.json(torontoData).then(function(data) {
   console.log(data);
 // Creating a GeoJSON layer with the retrieved data.
-L.geoJSON(data).addTo(map);
+L.geoJSON(data, {
+  style: myStyle,
+  onEachFeature: function(feature, layer) {
+    layer.bindPopup("<h3> Airline: " + feature.properties.airline + "</h3> <hr><h3> Destination: " + feature.properties.dst + "</h3>");
+  }
+}).addTo(map);
 });
